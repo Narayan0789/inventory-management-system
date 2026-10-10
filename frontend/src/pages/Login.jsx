@@ -515,14 +515,7 @@ const Login = ({ defaultRole = 'staff' }) => {
 
         {/* Minimalist Portal Header */}
         <div className="text-center mb-6">
-          {/* Zoho-style 4-tile brand logo */}
           <div className="inline-flex items-center justify-center gap-2 mb-2">
-            <div className="grid grid-cols-2 gap-0.5 w-5 h-5">
-              <span className="w-2 h-2 rounded-2xs bg-red-500"></span>
-              <span className="w-2 h-2 rounded-2xs bg-emerald-500"></span>
-              <span className="w-2 h-2 rounded-2xs bg-blue-500"></span>
-              <span className="w-2 h-2 rounded-2xs bg-amber-500"></span>
-            </div>
             <span className="text-sm font-black text-slate-900 tracking-tight">StockPilot</span>
           </div>
 

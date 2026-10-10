@@ -243,13 +243,6 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Logo & Title */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            {/* 4-tile colorful brand mark */}
-            <div className="grid grid-cols-2 gap-0.5 w-5 h-5">
-              <span className="w-2 h-2 rounded-2xs bg-red-500"></span>
-              <span className="w-2 h-2 rounded-2xs bg-emerald-500"></span>
-              <span className="w-2 h-2 rounded-2xs bg-blue-500"></span>
-              <span className="w-2 h-2 rounded-2xs bg-amber-500"></span>
-            </div>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
               <ShoppingCart className="w-4 h-4" />
             </div>
@@ -1315,12 +1308,6 @@ const LandingPage = () => {
             {/* Col 1: Brand Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
-                  <span className="w-1.5 h-1.5 rounded-xs bg-red-500"></span>
-                  <span className="w-1.5 h-1.5 rounded-xs bg-emerald-500"></span>
-                  <span className="w-1.5 h-1.5 rounded-xs bg-blue-500"></span>
-                  <span className="w-1.5 h-1.5 rounded-xs bg-amber-500"></span>
-                </div>
                 <span className="font-bold text-white text-sm">StockPilot Inventory</span>
               </div>
               <p className="text-slate-400 text-[11px] leading-relaxed">
