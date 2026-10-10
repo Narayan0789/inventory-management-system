@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Bell, LogOut, ShoppingCart, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -6,8 +6,10 @@ import { useAuth } from '../context/AuthContext';
 const Navbar = ({ alertCount = 0, onOpenMobileSidebar }) => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogout = () => {
+  const handleConfirmLogout = () => {
+    setShowLogoutModal(false);
     logout();
     navigate('/login');
   };
@@ -69,8 +71,8 @@ const Navbar = ({ alertCount = 0, onOpenMobileSidebar }) => {
             <p className="text-[10px] text-slate-500 uppercase font-medium">{user?.role}</p>
           </div>
           <button
-            onClick={handleLogout}
-            className="flex items-center gap-1 p-2 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+            onClick={() => setShowLogoutModal(true)}
+            className="flex items-center gap-1 p-2 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
             title="Sign Out"
           >
             <LogOut className="w-4 h-4" />
@@ -78,6 +80,41 @@ const Navbar = ({ alertCount = 0, onOpenMobileSidebar }) => {
           </button>
         </div>
       </div>
+
+      {/* Logout Confirmation Alert Modal */}
+      {showLogoutModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 animate-in fade-in duration-200"
+          onClick={() => setShowLogoutModal(false)}
+        >
+          <div
+            className="bg-white rounded-3xl p-7 sm:p-9 max-w-sm w-full mx-auto shadow-2xl border border-slate-100 text-center animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-6 tracking-tight">
+              Are you sure you want to logout
+            </h3>
+
+            <div className="flex items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                className="px-6 sm:px-7 py-1.5 sm:py-2 rounded-full border border-sky-400 text-sky-500 hover:bg-sky-50 transition text-sm font-medium cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmLogout}
+                className="px-6 sm:px-7 py-1.5 sm:py-2 rounded-full bg-[#0095ff] hover:bg-[#0082e6] text-white transition text-sm font-medium shadow-sm cursor-pointer"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
