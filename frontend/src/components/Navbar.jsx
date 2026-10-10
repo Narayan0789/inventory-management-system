@@ -99,7 +99,7 @@ const Navbar = ({ alertCount = 0, onOpenMobileSidebar }) => {
               <button
                 type="button"
                 onClick={() => setShowLogoutModal(false)}
-                className="px-6 sm:px-7 py-1.5 sm:py-2 rounded-full border border-sky-400 text-sky-500 hover:bg-sky-50 transition text-sm font-medium cursor-pointer"
+                className="px-6 sm:px-7 py-1.5 sm:py-2 rounded-full border border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition text-sm font-medium cursor-pointer"
               >
                 Cancel
               </button>
@@ -107,7 +107,7 @@ const Navbar = ({ alertCount = 0, onOpenMobileSidebar }) => {
               <button
                 type="button"
                 onClick={handleConfirmLogout}
-                className="px-6 sm:px-7 py-1.5 sm:py-2 rounded-full bg-[#0095ff] hover:bg-[#0082e6] text-white transition text-sm font-medium shadow-sm cursor-pointer"
+                className="px-6 sm:px-7 py-1.5 sm:py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white transition text-sm font-medium shadow-sm cursor-pointer"
               >
                 Confirm
               </button>
