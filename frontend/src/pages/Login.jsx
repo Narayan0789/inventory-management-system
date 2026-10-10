@@ -54,9 +54,9 @@ const Login = ({ defaultRole = 'staff' }) => {
   // Auth Mode: 'login' | 'register'
   const [authMode, setAuthMode] = useState('login');
 
-  // Sign-In State (Pre-filled with respective demo account for seamless viva demonstration)
-  const [email, setEmail] = useState(isAdminRoute ? 'admin@shop.com' : 'staff@shop.com');
-  const [password, setPassword] = useState('password123');
+  // Sign-In State
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   // Registration State
@@ -121,13 +121,6 @@ const Login = ({ defaultRole = 'staff' }) => {
     const qMode = searchParams.get('mode');
     if (qMode && (qMode === 'login' || qMode === 'register')) {
       setAuthMode(qMode);
-    }
-    if (isAdminRoute) {
-      setEmail('admin@shop.com');
-      setPassword('password123');
-    } else {
-      setEmail('staff@shop.com');
-      setPassword('password123');
     }
     setError('');
     setSuccessMsg('');
@@ -275,6 +268,14 @@ const Login = ({ defaultRole = 'staff' }) => {
     setIsGoogleModalOpen(false);
 
     if (res.success) {
+      const loggedInRole = res.user?.role;
+
+      // Strict RBAC Separation: Check if user role matches the current portal
+      if (role === 'admin' && loggedInRole !== 'admin') {
+        setError('Access denied. This portal is strictly for Store Administrators. Your Google account has Staff access.');
+        return;
+      }
+
       if (rememberDevice) {
         const toSave = {
           email: cleanEmail,

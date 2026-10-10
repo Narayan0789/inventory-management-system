@@ -6,6 +6,13 @@ const { OAuth2Client } = require('google-auth-library');
 
 const googleClient = new OAuth2Client();
 
+// Pre-authorized Administrator emails
+const ADMIN_EMAILS = [
+  'admin@shop.com',
+  'kumarnarayan99055@gmail.com',
+  'narayan.cse2023@huroorkee.ac.in'
+];
+
 // Helper to generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'inventory_secret_key_2026', {
@@ -15,26 +22,27 @@ const generateToken = (id) => {
 
 // @desc   Register a new user
 // @route  POST /api/auth/register
-// @access Public (First user automatically becomes 'admin')
+// @access Public (Security: Default role is always 'staff' unless authorized admin email or 1st user)
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role, phone } = req.body;
+    const { name, email, password, phone } = req.body;
 
-    const userExists = await User.findOne({ email: email.toLowerCase().trim() });
+    const cleanEmail = email.toLowerCase().trim();
+    const userExists = await User.findOne({ email: cleanEmail });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'User with this email already exists' });
     }
 
-    // If this is the very first user in the database, make them admin
+    // Security Check: Only verified admin emails or the very first system user can be admin
     const totalUsers = await User.countDocuments();
-    let assignedRole = role || 'staff';
-    if (totalUsers === 0) {
+    let assignedRole = 'staff';
+    if (totalUsers === 0 || ADMIN_EMAILS.includes(cleanEmail)) {
       assignedRole = 'admin';
     }
 
     const user = await User.create({
       name,
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       password,
       role: assignedRole,
       phone: phone || ''
@@ -137,14 +145,14 @@ const googleAuth = async (req, res) => {
       if (avatar && !user.avatar) {
         user.avatar = avatar;
       }
-      // If user specifically requests admin role and has admin permissions/email
-      if (role && role === 'admin' && user.role !== 'admin') {
+      // Security: Only promote to admin if email is in verified ADMIN_EMAILS whitelist
+      if (ADMIN_EMAILS.includes(cleanEmail) && user.role !== 'admin') {
         user.role = 'admin';
       }
       await user.save();
     } else {
-      // New user: assign requested role ('admin' or 'staff')
-      const assignedRole = role === 'admin' ? 'admin' : 'staff';
+      // Security: New Google signups are ALWAYS 'staff' unless email is in verified ADMIN_EMAILS
+      const assignedRole = ADMIN_EMAILS.includes(cleanEmail) ? 'admin' : 'staff';
       const randomPassword = crypto.randomBytes(16).toString('hex');
       user = await User.create({
         name: name || cleanEmail.split('@')[0],
