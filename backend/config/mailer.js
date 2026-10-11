@@ -44,16 +44,17 @@ const sendOtpEmail = async (toEmail, otp, name = 'User') => {
 
   if (transporter) {
     try {
-      await transporter.sendMail({
-        from: `"StockPilot IMS" <${process.env.GMAIL_USER}>`,
+      const info = await transporter.sendMail({
+        from: `"StockPilot IMS" <${process.env.GMAIL_USER.trim()}>`,
         to: toEmail,
         subject: `Your StockPilot Password Reset OTP: ${otp}`,
         html: htmlContent
       });
-      console.log(`✅ [GMAIL SMTP SENT]: OTP successfully sent to ${toEmail}`);
+      console.log(`✅ [GMAIL SMTP SENT]: OTP successfully sent to ${toEmail} (Message ID: ${info.messageId})`);
       return { success: true, mode: 'smtp' };
     } catch (err) {
-      console.warn(`⚠️ [SMTP ERROR]: ${err.message}. Falling back to terminal display.`);
+      console.error(`⚠️ [SMTP ERROR]: ${err.message}`);
+      return { success: false, mode: 'error', error: err.message };
     }
   }
 
@@ -61,7 +62,7 @@ const sendOtpEmail = async (toEmail, otp, name = 'User') => {
   console.log(`\n============================================================`);
   console.log(`📩 [GMAIL OTP DISPATCH FOR: ${toEmail}]`);
   console.log(`🔑 OTP CODE: ${otp} (Valid for 10 minutes)`);
-  console.log(`ℹ️ To send real Gmails, set GMAIL_USER & GMAIL_APP_PASSWORD in backend/.env`);
+  console.log(`⚠️ To send real Gmails, set GMAIL_USER & GMAIL_APP_PASSWORD in environment!`);
   console.log(`============================================================\n`);
 
   return { success: true, mode: 'console' };

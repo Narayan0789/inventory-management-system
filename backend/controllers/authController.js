@@ -213,16 +213,32 @@ const forgotPasswordOtp = async (req, res) => {
     // Dispatch OTP via Gmail service
     const mailResult = await sendOtpEmail(user.email, otp, user.name);
 
-    let infoMsg = `A 6-digit OTP has been sent to ${user.email}. Please check your inbox or spam folder.`;
-    if (mailResult.mode === 'console') {
-      infoMsg = `A 6-digit OTP verification code has been dispatched. (To receive real emails in Gmail, please configure GMAIL_USER & GMAIL_APP_PASSWORD in backend/.env).`;
+    if (mailResult.mode === 'smtp') {
+      return res.json({
+        success: true,
+        message: `A 6-digit OTP has been sent to ${user.email}. Please check your inbox or spam folder.`,
+        email: user.email,
+        sentViaSmtp: true
+      });
     }
 
-    res.json({
+    if (mailResult.mode === 'error') {
+      return res.json({
+        success: true,
+        message: `Gmail SMTP delivery notice: ${mailResult.error}. For instant testing, your OTP code is: ${otp}`,
+        email: user.email,
+        sentViaSmtp: false,
+        fallbackOtp: otp
+      });
+    }
+
+    // mode === 'console' (GMAIL_USER or GMAIL_APP_PASSWORD missing in cloud environment)
+    return res.json({
       success: true,
-      message: infoMsg,
+      message: `Gmail SMTP is not configured on Render. To receive real emails, add GMAIL_USER & GMAIL_APP_PASSWORD in Render. For testing, your OTP code is: ${otp}`,
       email: user.email,
-      sentViaSmtp: mailResult.mode === 'smtp'
+      sentViaSmtp: false,
+      fallbackOtp: otp
     });
   } catch (error) {
     console.error('Forgot Password OTP Error:', error);

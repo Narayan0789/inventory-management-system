@@ -381,6 +381,9 @@ const Login = ({ defaultRole = 'staff' }) => {
       const res = await API.post('/auth/forgot-password', { email: forgotEmail.trim() });
       if (res.data.success) {
         setForgotSuccess(res.data.message);
+        if (res.data.fallbackOtp) {
+          setOtp(res.data.fallbackOtp);
+        }
         setForgotStep(2);
       }
     } catch (err) {
