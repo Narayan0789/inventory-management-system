@@ -137,19 +137,6 @@ const Login = ({ defaultRole = 'staff' }) => {
     setLoading(false);
 
     if (result.success) {
-      const loggedInRole = result.user?.role;
-
-      // Strict RBAC Separation: Check if user role matches the current portal
-      if (role === 'admin' && loggedInRole !== 'admin') {
-        setError('Access denied. This portal is strictly for Store Administrators. Staff members must use the Staff Login portal.');
-        return;
-      }
-
-      if (role === 'staff' && loggedInRole === 'admin') {
-        setError('This account has Administrator privileges. Please use the Admin Login portal.');
-        return;
-      }
-
       // Successful verification: Navigate to Dashboard
       navigate('/');
     } else {
@@ -181,7 +168,7 @@ const Login = ({ defaultRole = 'staff' }) => {
         email: regEmail.trim(),
         phone: regPhone.trim(),
         password: regPassword,
-        role: role // 'admin' or 'staff' depending on current portal
+        role: 'staff' // Default role is staff; administrator roles are managed directly in the database
       });
 
       if (res.data.success) {
@@ -201,7 +188,7 @@ const Login = ({ defaultRole = 'staff' }) => {
         // Switch to login tab and prompt user
         setAuthMode('login');
         setSuccessMsg(
-          `${role === 'admin' ? 'Administrator' : 'Staff'} account registered successfully. Please sign in with your password.`
+          'Account registered successfully. Please sign in with your password.'
         );
       }
     } catch (err) {
@@ -268,14 +255,6 @@ const Login = ({ defaultRole = 'staff' }) => {
     setIsGoogleModalOpen(false);
 
     if (res.success) {
-      const loggedInRole = res.user?.role;
-
-      // Strict RBAC Separation: Check if user role matches the current portal
-      if (role === 'admin' && loggedInRole !== 'admin') {
-        setError('Access denied. This portal is strictly for Store Administrators. Your Google account has Staff access.');
-        return;
-      }
-
       if (rememberDevice) {
         const toSave = {
           email: cleanEmail,
@@ -519,28 +498,19 @@ const Login = ({ defaultRole = 'staff' }) => {
             <span className="text-sm font-black text-slate-900 tracking-tight">StockPilot</span>
           </div>
 
-          {/* Role Status Pill */}
+          {/* Status Pill */}
           <div className="flex justify-center mb-2">
-            {role === 'admin' ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Store Administrator Portal</span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs">
-                <User className="w-3.5 h-3.5 text-slate-600" />
-                <span>Staff Member Portal</span>
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Inventory Management Portal</span>
+            </span>
           </div>
 
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            {role === 'admin' ? 'Administrator Login' : 'Staff Login'}
+            Account Sign In
           </h1>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed">
-            {role === 'admin'
-              ? 'Executive access for inventory analytics, profit margins, staff management, and system configuration.'
-              : 'Sign in to access POS billing, counter sales, barcode lookup, and stock replenishment operations.'}
+            Sign in to access your inventory dashboard, POS billing counter, and stock management operations.
           </p>
         </div>
 
@@ -578,7 +548,7 @@ const Login = ({ defaultRole = 'staff' }) => {
               }`}
             >
               <UserPlus className="w-3.5 h-3.5 text-slate-500" />
-              <span>{role === 'admin' ? 'Register Admin' : 'Register New Staff'}</span>
+              <span>Register Account</span>
             </button>
           </div>
 
@@ -596,16 +566,6 @@ const Login = ({ defaultRole = 'staff' }) => {
               <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
               <div className="flex-1">
                 <span>{error}</span>
-                {error.includes('Admin Login portal') && (
-                  <Link to="/admin-login" className="block mt-1 font-bold underline text-red-800">
-                    Switch to Admin Portal &rarr;
-                  </Link>
-                )}
-                {error.includes('Staff Login portal') && (
-                  <Link to="/login" className="block mt-1 font-bold underline text-red-800">
-                    Switch to Staff Portal &rarr;
-                  </Link>
-                )}
               </div>
             </div>
           )}
@@ -691,7 +651,7 @@ const Login = ({ defaultRole = 'staff' }) => {
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  {role === 'admin' ? 'Administrator Email' : 'Staff Email Address'}
+                  Email Address
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -700,7 +660,7 @@ const Login = ({ defaultRole = 'staff' }) => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder={role === 'admin' ? 'admin@shop.com' : 'staff@shop.com'}
+                    placeholder="name@shop.com"
                     className="w-full pl-10 pr-3.5 py-2.5 text-xs sm:text-sm bg-slate-50/50 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 transition shadow-2xs outline-hidden"
                   />
                 </div>
@@ -748,11 +708,7 @@ const Login = ({ defaultRole = 'staff' }) => {
                 className="w-full mt-2 py-2.5 px-4 font-bold text-xs sm:text-sm rounded-xl shadow-xs flex items-center justify-center gap-2 transition disabled:opacity-50 bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <span>
-                  {loading
-                    ? 'Authenticating...'
-                    : role === 'admin'
-                    ? 'Sign In to Admin Dashboard'
-                    : 'Sign In as Staff'}
+                  {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
                 </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
@@ -762,17 +718,12 @@ const Login = ({ defaultRole = 'staff' }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    if (role === 'admin') {
-                      setEmail('admin@shop.com');
-                      setPassword('password123');
-                    } else {
-                      setEmail('staff@shop.com');
-                      setPassword('password123');
-                    }
+                    setEmail('admin@shop.com');
+                    setPassword('password123');
                   }}
                   className="text-[11px] text-slate-400 hover:text-slate-700 transition font-medium"
                 >
-                  Click to autofill demo {role === 'admin' ? 'Admin' : 'Staff'} credentials
+                  Click to autofill demo credentials
                 </button>
               </div>
             </form>
@@ -790,7 +741,7 @@ const Login = ({ defaultRole = 'staff' }) => {
                     required
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
-                    placeholder={role === 'admin' ? 'e.g. Narayan (Store Owner)' : 'e.g. Rahul Sharma'}
+                    placeholder="e.g. Rahul Sharma"
                     className="w-full pl-10 pr-3.5 py-2.5 text-xs sm:text-sm bg-slate-50/50 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 transition shadow-2xs outline-hidden"
                   />
                 </div>
@@ -805,7 +756,7 @@ const Login = ({ defaultRole = 'staff' }) => {
                     required
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    placeholder={role === 'admin' ? 'admin@company.com' : 'staff@company.com'}
+                    placeholder="name@company.com"
                     className="w-full pl-10 pr-3.5 py-2.5 text-xs sm:text-sm bg-slate-50/50 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 transition shadow-2xs outline-hidden"
                   />
                 </div>
@@ -878,34 +829,9 @@ const Login = ({ defaultRole = 'staff' }) => {
                 className="w-full py-2.5 px-4 font-bold text-xs sm:text-sm rounded-xl shadow-xs flex items-center justify-center gap-2 transition disabled:opacity-50 bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <UserPlus className="w-4 h-4" />
-                <span>
-                  {loading
-                    ? 'Creating Account...'
-                    : role === 'admin'
-                    ? 'Register Administrator Account'
-                    : 'Register Staff Account'}
-                </span>
+                <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
               </button>
             </form>
-          )}
-        </div>
-
-        {/* Cross-Portal Switcher Link */}
-        <div className="text-center mt-5 text-xs text-slate-600">
-          {role === 'staff' ? (
-            <p>
-              Are you a Store Administrator?{' '}
-              <Link to="/admin-login" className="font-bold text-slate-900 hover:text-emerald-700 transition underline">
-                Go to Admin Login &rarr;
-              </Link>
-            </p>
-          ) : (
-            <p>
-              Store Staff Member?{' '}
-              <Link to="/login" className="font-bold text-emerald-700 hover:text-emerald-800 transition underline">
-                Go to Staff Login &rarr;
-              </Link>
-            </p>
           )}
         </div>
 

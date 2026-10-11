@@ -232,7 +232,7 @@ const LandingPage = () => {
     },
     {
       q: 'How do I get started with StockPilot?',
-      a: 'Click "Get Started Free" to register a staff account, or click "Admin Login" if you are the store owner. You can also explore immediate live functionality using the built-in demo credentials.'
+      a: 'Click "Get Started Free" to create your account, or click "Sign In" to access your dashboard. You can also explore immediate live functionality using the built-in demo credentials.'
     }
   ];
 
@@ -302,15 +302,6 @@ const LandingPage = () => {
             >
               Get Started Free
             </Link>
-
-            {/* Admin Login Button */}
-            <Link
-              to="/admin-login"
-              className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 shadow-2xs transition flex items-center gap-1.5"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-slate-600" />
-              <span>Admin Login</span>
-            </Link>
           </div>
         </div>
       </header>
@@ -358,14 +349,6 @@ const LandingPage = () => {
             >
               Explore Solutions
             </button>
-
-            <Link
-              to="/admin-login"
-              className="px-6 py-3 rounded-xl text-xs sm:text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 shadow-2xs transition flex items-center gap-1.5 hover:-translate-y-0.5"
-            >
-              <ShieldCheck className="w-4 h-4 text-slate-600" />
-              <span>Admin Portal</span>
-            </Link>
           </div>
         </div>
 
@@ -1115,10 +1098,10 @@ const LandingPage = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate('/admin-login')}
+                  onClick={() => navigate('/login?mode=login')}
                   className="w-full mt-4 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2"
                 >
-                  <span>Enter Admin Workspace</span>
+                  <span>Sign In to Dashboard</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -1290,13 +1273,6 @@ const LandingPage = () => {
             >
               Sign In
             </Link>
-            <Link
-              to="/admin-login"
-              className="px-6 py-3 rounded-xl text-xs sm:text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition flex items-center gap-1.5 hover:-translate-y-0.5"
-            >
-              <ShieldCheck className="w-4 h-4 text-slate-600" />
-              <span>Admin Portal</span>
-            </Link>
           </div>
         </div>
       </section>
@@ -1336,16 +1312,13 @@ const LandingPage = () => {
 
             {/* Col 3: Account */}
             <div className="space-y-2.5">
-              <p className="text-white font-bold text-xs uppercase tracking-wider">Account Portals</p>
+              <p className="text-white font-bold text-xs uppercase tracking-wider">Account</p>
               <ul className="space-y-2 text-[11px]">
                 <li>
-                  <Link to="/login?mode=login" className="hover:text-white transition">Staff Sign In</Link>
+                  <Link to="/login?mode=login" className="hover:text-white transition">Sign In</Link>
                 </li>
                 <li>
-                  <Link to="/login?mode=register" className="hover:text-white transition">Create Staff Account</Link>
-                </li>
-                <li>
-                  <Link to="/admin-login" className="hover:text-emerald-400 transition font-medium">Administrator Portal</Link>
+                  <Link to="/login?mode=register" className="hover:text-white transition">Create Account</Link>
                 </li>
                 <li>
                   <a href="#roles" className="hover:text-white transition">RBAC Permissions</a>
